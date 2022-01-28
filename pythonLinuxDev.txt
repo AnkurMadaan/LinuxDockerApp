@@ -1,0 +1,50 @@
+azfunctionresourcegr
+
+Storage Account
+storageaccountazfun83d3
+
+python -m venv .venv 
+.venv\scripts\activate 
+
+
+func init --worker-runtime python --docker 
+
+func new --name HttpExample --template "HTTP trigger" --authlevel anonymous 
+
+
+func start 
+
+
+docker build --tag 16190/azurefunctionsimage:v1.0.0  . 
+
+
+docker run -p 8080:80 -it 16190/azurefunctionsimage:v1.0.0 
+
+
+
+docker login 
+docker push 16190/azurefunctionsimage:v1.0.0 
+
+
+dockerimage:-
+16190/azurefunctionsimage:v1.0.0 
+
+az login 
+az group create --name AzureFunctionContainers-rg --location eastus2
+az functionapp plan create --resource-group AzureFunctionContainers-rg --name myPremiumPlan --location eastus2 --number-of-workers 1 --sku EP1 --is-linux
+az storage account create --name mylinuxfunctionstrg --location eastus2 --resource-group AzureFunctionContainers-rg
+az functionapp create --name "linuxdockerfunctionapp" --storage-account mylinuxfunctionstrg --resource-group AzureFunctionContainers-rg --plan myPremiumPlan --deployment-container-image-name "16190/azurefunctionsimage:v1.0.0" --functions-version 3
+
+
+
+az functionapp deployment container config --enable-cd --query CI_CD_URL --output tsv --name linuxdockerfunctionapp --resource-group AzureFunctionContainers-rg
+
+https://$linuxdockerfunctionapp:y70QxpYiLJ46W1jqwhKDmj3eE6Eikafph3gatTMcJansLcxAeJxT02jNLSl7@linuxdockerfunctionapp.scm.azurewebsites.net/docker/hook
+
+
+
+
+
+
+
+
